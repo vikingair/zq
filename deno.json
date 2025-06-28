@@ -1,12 +1,12 @@
 {
   "name": "@vl/zq",
   "version": "0.0.1",
-  "exports": "./index.ts",
+  "exports": "./src/main.ts",
   "publish": {
     "include": [
       "LICENSE",
       "README.md",
-      "index.ts"
+      "./src/main.ts"
     ]
   },
   "repository": {
