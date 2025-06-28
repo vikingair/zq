@@ -1,0 +1,29 @@
+{
+  "name": "@vl/zq",
+  "version": "0.0.1",
+  "exports": "./index.ts",
+  "publish": {
+    "include": [
+      "LICENSE",
+      "README.md",
+      "index.ts"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vikingair/zq"
+  },
+  "license": "MIT",
+  "tasks": {
+    "build": "brocolito deno --allow-env --allow-read",
+    "lint": "deno task lint:fmt && deno task lint:lint && deno task lint:ts",
+    "lint:lint": "deno lint",
+    "lint:fmt": "deno fmt",
+    "lint:ts": "deno check",
+    "test": "deno test --allow-env --allow-read"
+  },
+  "imports": {
+    "@std/testing": "jsr:@std/testing@1",
+    "brocolito": "npm:brocolito@6.1.1"
+  }
+}
