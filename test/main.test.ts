@@ -7,8 +7,8 @@ const parseStub = stub(CLI, "parse");
 await import("../src/main.ts");
 parseStub.restore();
 
-const call = (file: string, evalString: string) =>
-  CLI.parse(["nodeFile", "scriptFile", "run", file, evalString]);
+const call = (file: string, evalString: string, ...options: string[]) =>
+  CLI.parse(["nodeFile", "scriptFile", "run", file, evalString, ...options]);
 
 describe("zq", () => {
   it("print all keys of the JSON file", async () => {
@@ -17,9 +17,11 @@ describe("zq", () => {
 
     // when
     await call("./test/test1.json", "Object.keys(z)");
+
     await call("./test/test1.json", "String(Object.keys(z))");
 
     // then
+    log.calls[0].args[0] = [...log.calls[0].args[0]]; // HINT: The used array in VM uses a different Array.prototype.contructor
     assertSpyCall(log, 0, {
       args: [["Jorge", "Tamara", "Alex"], { depth: null }],
     });
@@ -58,7 +60,8 @@ describe("zq", () => {
     // when
     await call(
       "./test/test3.json",
-      "(() => { const foo = new Set(Object.values(z).map((v) => v.status)); return foo.size > 3 ? 'too many' : 'ok' })()",
+      "const foo = new Set(Object.values(z).map((v) => v.status)); return foo.size > 3 ? 'too many' : 'ok'",
+      "-f",
     );
 
     // then
@@ -77,5 +80,25 @@ describe("zq", () => {
 
     // then
     assertSpyCall(log, 0, { args: [test1JSON, { depth: null }] });
+  });
+
+  it("print mutated object", async () => {
+    // given
+    using log = stub(console, "dir");
+
+    // when
+    await call(
+      "./test/test1.json",
+      "z.Michael = { email: 'michael@example.com' }",
+      "-u",
+    );
+
+    // then
+    log.calls[0].args[0].Michael = { ...log.calls[0].args[0].Michael }; // HINT: The used array in VM uses a different Object.prototype.contructor
+    assertSpyCall(log, 0, {
+      args: [{ ...test1JSON, Michael: { email: "michael@example.com" } }, {
+        depth: null,
+      }],
+    });
   });
 });

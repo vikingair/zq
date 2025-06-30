@@ -1,7 +1,9 @@
 {
   "name": "@vl/zq",
-  "version": "0.0.1",
-  "exports": "./src/main.ts",
+  "version": "0.0.2",
+  "bin": {
+    "zq": "./src/main.ts"
+  },
   "publish": {
     "include": [
       "LICENSE",
